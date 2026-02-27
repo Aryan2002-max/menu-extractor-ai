@@ -1,0 +1,6 @@
+Flask
+google-generativeai
+python-dotenv
+gunicorn
+psycopg2-binary
+mysql-connector-python
