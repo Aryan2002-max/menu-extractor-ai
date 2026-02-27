@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu Extractor AI</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: white;
+            text-align: center;
+        }
+        h1 {
+            color: #00ffcc;
+        }
+        form {
+            margin-top: 30px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+        }
+        table {
+            margin: auto;
+            margin-top: 30px;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid white;
+            padding: 10px;
+        }
+        th {
+            background: #00ffcc;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🍽️ Menu Extractor AI</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="images" multiple>
+    <br>
+    <button type="submit">Upload & Extract</button>
+</form>
+
+{% if data %}
+<table>
+    <tr>
+        <th>Category</th>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Currency</th>
+    </tr>
+    {% for row in data %}
+    <tr>
+        <td>{{row[0]}}</td>
+        <td>{{row[1]}}</td>
+        <td>{{row[2]}}</td>
+        <td>{{row[3]}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+</body>
+</html>
