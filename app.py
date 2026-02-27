@@ -7,7 +7,7 @@ import re
 app = Flask(__name__)
 
 # 🔑 Gemini API
-genai.configure(api_key="Your api key")
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 
@@ -61,32 +61,31 @@ def clean_json(text):
 
 
 # 💾 Save to DB
-def save_to_db(data):
-    conn = sqlite3.connect("menu.db")
-    cursor = conn.cursor()
+def get_db_connection():
+    db_type = os.getenv("DB_TYPE")  # mysql / postgres
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS menu (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        category TEXT,
-        item TEXT,
-        price TEXT
-    )
-    """)
+    if db_type == "mysql":
+        import mysql.connector
+        conn = mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
 
-    for item in data:
-        cursor.execute("""
-        INSERT INTO menu (category, item, price)
-        VALUES (?, ?, ?)
-        """, (item["category"], item["item"], item["price"]))
+    elif db_type == "postgres":
+        import psycopg2
+        conn = psycopg2.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            dbname=os.getenv("DB_NAME")
+        )
 
-    conn.commit()
+    else:
+        raise Exception("❌ DB_TYPE not set properly")
 
-    cursor.execute("SELECT category, item, price FROM menu")
-    rows = cursor.fetchall()
-
-    conn.close()
-    return rows
+    return conn
 
 
 # 🧠 Gemini Processing (MULTI IMAGE)
